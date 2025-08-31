@@ -1,5 +1,4 @@
 import numpy as np
-from .metrics import binary_cross_entropy
 from .optim import gradients
 
 def predict_from_params(X,w,b):
