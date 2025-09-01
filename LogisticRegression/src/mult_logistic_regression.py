@@ -41,8 +41,6 @@ class MultinomialLogisticRegression:
     
     y_onehot = np.eye(unique_val)[y_true.reshape(-1)]
 
-    ## Forward pass 
-
     for epoch in range(self.max_epochs):
 
       z_matrix = X @ self.w + self.b
@@ -73,6 +71,27 @@ class MultinomialLogisticRegression:
       self.last = loss_val
 
     return self
+  
+  def predict(self,X):
+
+    z_matrix = X @ self.w + self.b
+
+    y_softmax = calculate_softmax(z_matrix)
+
+    y_pred = np.argmax(y_softmax,axis=1)
+
+    return y_pred
+  
+  
+  def predict_probab(self,X):
+
+    z_matrix = X @ self.w + self.b
+
+    y_softmax = calculate_softmax(z_matrix)
+
+    return y_softmax
+
+
 
 
 
