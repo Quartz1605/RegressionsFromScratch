@@ -37,3 +37,4 @@ y_wrong = abs(y_pred_train - y_train)
 print(np.sum(y_wrong))
 
 
+
