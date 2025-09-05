@@ -23,11 +23,9 @@ def data_preprocessing(data):
 
 def log_gaussian_feature_density(mean_data,variance_data,X_data):
 
-  log_gaussian_val = np.sum(((-1/2)*np.log(2*3.14*variance_data)) - ((X_data-mean_data)**2/2*variance_data))
+  log_gaussian_val = np.sum(((-1/2)*np.log(2*np.pi*variance_data)) - (((X_data-mean_data)**2)/(2*variance_data)),axis=1)
 
   return log_gaussian_val
-
-
 
 
 class GaussianNaiveBayes:
@@ -48,7 +46,7 @@ class GaussianNaiveBayes:
   
   def fit(self,X_true,y_true):
 
-    data = np.concatenate((X_true,y_true),axis=1)
+    data = np.concatenate((X_true,y_true.reshape(-1,1)),axis=1)
 
     zero_X,one_X = data_preprocessing(data)
     
@@ -59,11 +57,27 @@ class GaussianNaiveBayes:
     self.mean_one_X = one_X.mean(axis=0)
     self.mean_zero_X = zero_X.mean(axis=0)
 
-    self.var_one_X = one_X.var(axis=0)
-    self.var_zero_X = zero_X.var(axis=0)
+    self.var_one_X = one_X.var(axis=0) + self.epsilon
+    self.var_zero_X = zero_X.var(axis=0) + self.epsilon
 
-    log_gauss_one_val = log_gaussian_feature_density(self.mean_one_X,self.var_one_X,one_X)
-    log_gauss_zero_val = log_gaussian_feature_density(self.mean_zero_X,self.var_zero_X,zero_X)
+    print("Model fitted")
+
+    return self
+
+  def predict(self,X):
+
+    X = np.asarray(X)
+
+    log_density_one = log_gaussian_feature_density(self.mean_one_X,self.var_one_X,X)
+    log_density_zero = log_gaussian_feature_density(self.mean_zero_X,self.var_zero_X,X)
+
+    one_probab = self.prior_one + log_density_one
+    zero_probab = self.prior_zero + log_density_zero
+
+    return (one_probab > zero_probab).astype(int)
+  
+  
+
 
 
 
